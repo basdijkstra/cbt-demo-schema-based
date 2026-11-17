@@ -1,0 +1,176 @@
+openapi: 3.0.3
+info:
+  title: Customer API
+  description: |
+    Small example API for demonstrating contract testing with Specmatic.
+
+    The named examples in this spec are used by Specmatic as test cases.
+    Request examples (path parameters / request bodies) are linked to response
+    examples by sharing the same example name.
+
+    The API is seeded with the following customers on startup:
+      - id 1 (used by the GET examples)
+      - id 2 (used by the DELETE example)
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /customers:
+    post:
+      summary: Create a new customer
+      operationId: createCustomer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewCustomer'
+            examples:
+              CREATE_CUSTOMER_SUCCESS:
+                value:
+                  firstName: Jane
+                  lastName: Smith
+                  email: jane.smith@example.com
+      responses:
+        '201':
+          description: Customer created
+          headers:
+            Location:
+              description: URI of the newly created customer
+              schema:
+                type: string
+              examples:
+                CREATE_CUSTOMER_SUCCESS:
+                  value: /customers/3
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+              examples:
+                CREATE_CUSTOMER_SUCCESS:
+                  value:
+                    id: 3
+                    firstName: Jane
+                    lastName: Smith
+                    email: jane.smith@example.com
+        '400':
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /customers/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Customer id
+        schema:
+          type: integer
+          format: int32
+        examples:
+          GET_CUSTOMER_SUCCESS:
+            value: 1
+          GET_CUSTOMER_NOT_FOUND:
+            value: 999
+          DELETE_CUSTOMER_SUCCESS:
+            value: 2
+          DELETE_CUSTOMER_NOT_FOUND:
+            value: 999
+    get:
+      summary: Get a customer by id
+      operationId: getCustomer
+      responses:
+        '200':
+          description: Customer found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+              examples:
+                GET_CUSTOMER_SUCCESS:
+                  value:
+                    id: 1
+                    firstName: John
+                    lastName: Doe
+                    email: john.doe@example.com
+        '400':
+          description: Invalid customer id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                GET_CUSTOMER_NOT_FOUND:
+                  value:
+                    message: Customer with id 999 not found
+    delete:
+      summary: Delete a customer by id
+      operationId: deleteCustomer
+      responses:
+        '204':
+          description: Customer deleted
+        '400':
+          description: Invalid customer id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                DELETE_CUSTOMER_NOT_FOUND:
+                  value:
+                    message: Customer with id 999 not found
+components:
+  schemas:
+    NewCustomer:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - email
+      properties:
+        firstName:
+          type: string
+          minLength: 1
+        lastName:
+          type: string
+          minLength: 1
+        email:
+          type: string
+          minLength: 1
+    Customer:
+      type: object
+      required:
+        - id
+        - firstName
+        - lastName
+        - email
+      properties:
+        id:
+          type: integer
+          format: int32
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
