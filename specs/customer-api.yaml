@@ -60,26 +60,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
   /customers/{id}:
-    parameters:
-      - name: id
-        in: path
-        required: true
-        description: Customer id
-        schema:
-          type: integer
-          format: int32
-        examples:
-          GET_CUSTOMER_SUCCESS:
-            value: 1
-          GET_CUSTOMER_NOT_FOUND:
-            value: 999
-          DELETE_CUSTOMER_SUCCESS:
-            value: 2
-          DELETE_CUSTOMER_NOT_FOUND:
-            value: 999
     get:
       summary: Get a customer by id
       operationId: getCustomer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Customer id
+          schema:
+            type: integer
+            format: int32
+          examples:
+            GET_CUSTOMER_SUCCESS:
+              value: 1
+            GET_CUSTOMER_NOT_FOUND:
+              value: 999
       responses:
         '200':
           description: Customer found
@@ -113,6 +109,19 @@ paths:
     delete:
       summary: Delete a customer by id
       operationId: deleteCustomer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Customer id
+          schema:
+            type: integer
+            format: int32
+          examples:
+            DELETE_CUSTOMER_SUCCESS:
+              value: 2
+            DELETE_CUSTOMER_NOT_FOUND:
+              value: 999
       responses:
         '204':
           description: Customer deleted
