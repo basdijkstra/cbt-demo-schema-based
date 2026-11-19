@@ -24,7 +24,7 @@ Id `999` never exists and is used by the `*_NOT_FOUND` examples.
 ## Run
 
 ```bash
-dotnet run --project src/CustomerApi
+dotnet run --project provider/CustomerApi
 ```
 
 API listens on `http://localhost:8080`.
